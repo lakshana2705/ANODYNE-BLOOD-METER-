@@ -1,0 +1,52 @@
+#include "thingProperties.h"
+void setup() {
+// Initialize serial and wait for port to open:
+Serial.begin(9600);
+// This delay gives the chance to wait for a Serial Monitor without blocking if none 
+is 
+found
+delay(1500); 
+// Defined in thingProperties.h
+initProperties();
+// Connect to Arduino IoT Cloud
+ArduinoCloud.begin(ArduinoIoTPreferredConnection);
+/*
+The following function allows you to obtain more information
+related to the state of network and IoT Cloud connection and errors
+the higher number the more granular information you’ll get.
+The default is 0 (only errors).
+Maximum is 4
+*/
+setDebugMessageLevel(2);
+ArduinoCloud.printDebugInfo();
+}
+void loop() {
+ArduinoCloud.update();
+Your code here 
+int gas = analogRead(A0);
+gasPPM=gas;
+delay(1000);
+}
+/*
+Since GasPPM is READ_WRITE variable, onGasPPMChange() is
+executed every time a new value is received from IoT Cloud.
+*/
+void onGasPPMChange() {
+// Add your code here to act upon GasPPM change
+}
+#include <ESP8266WiFi.h>
+const char* ssid = "YourWiFiSSID"; // WiFi SSID
+const char* password = "YourWiFiPassword"; // WiFi password
+const int gasSensorPin = A0; // Pin connected to the gas sensor analog output
+void setup() {
+Serial.begin(9600);
+connectToWiFi();
+}
+void loop() {
+int gasValue = analogRead(gasSensorPin); // Read gas sensor value
+if (gasValue > 500) { // Adjust the threshold value as per your gas sensor
+sendGasAlert();
+delay(10000); // Wait for 10 seconds before sending another alert
+}
+delay(1000); // Wait for 1 second before checking the gas sensor again
+}
